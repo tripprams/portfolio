@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tripp Rams — Creative Portfolio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=DM+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{background:#1a2e1a;font-family:'DM Mono',monospace;}
+
+#home-page,#about-page,#project-page{
+  position:fixed;inset:0;
+  transition:opacity 0.65s ease,transform 0.65s cubic-bezier(0.16,1,0.3,1);
+}
+#about-page,#project-page{opacity:0;pointer-events:none;transform:translateY(28px);z-index:200;}
+#about-page.active,#project-page.active{opacity:1;pointer-events:all;transform:translateY(0);}
+#home-page.hidden{opacity:0;pointer-events:none;}
+
+/* BG */
+#bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 55% at 15% 85%,#2d4a1e 0%,transparent 60%),
+    radial-gradient(ellipse 55% 70% at 85% 15%,#1e3d2a 0%,transparent 55%),
+    radial-gradient(ellipse 100% 100% at 50% 50%,#0f1f0f 0%,#1a2e1a 100%);
+  will-change:transform;
+}
+#bg::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+  opacity:0.55;
+}
+.bg-ring{position:absolute;border-radius:50%;border:1px solid rgba(139,180,80,0.07);pointer-events:none;}
+
+/* CARDS */
+#images-layer{position:absolute;inset:0;will-change:transform;}
+.work-card{
+  position:absolute;cursor:pointer;overflow:hidden;
+  border:1px solid rgba(180,150,80,0.18);
+  transition:border-color 0.3s,box-shadow 0.3s,transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.work-card:hover{
+  border-color:rgba(210,150,60,0.8);
+  box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(210,150,60,0.2);
+  z-index:50!important;
+  transform:scale(1.04) rotate(0deg)!important;
+}
+.card-inner{width:100%;height:100%;position:relative;overflow:hidden;}
+.card-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform 0.5s ease;filter:brightness(0.7) saturate(0.8);}
+.work-card:hover .card-img{transform:scale(1.07);filter:brightness(0.85) saturate(1.05);}
+.play-btn{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;border-radius:50%;
+  border:1.5px solid rgba(232,220,192,0.4);background:rgba(15,25,15,0.5);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity 0.25s;pointer-events:none;
+}
+.play-btn::after{content:'';width:0;height:0;border-style:solid;border-width:8px 0 8px 14px;border-color:transparent transparent transparent rgba(232,220,192,0.8);margin-left:3px;}
+.work-card:hover .play-btn{opacity:1;}
+.card-label{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:3rem 1rem 0.9rem;
+  background:linear-gradient(to top,rgba(6,12,6,0.97) 0%,rgba(6,12,6,0.5) 60%,transparent 100%);
+}
+.card-num{font-size:9px;letter-spacing:0.3em;color:rgba(180,150,80,0.6);text-transform:uppercase;margin-bottom:3px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:#e8dcc0;line-height:1.15;margin-bottom:2px;}
+.card-sub{font-size:8px;letter-spacing:0.12em;color:rgba(200,180,140,0.4);text-transform:uppercase;}
+.card-tag{
+  position:absolute;top:10px;left:10px;
+  background:rgba(10,18,10,0.75);border:1px solid rgba(180,150,80,0.25);
+  font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,150,80,0.65);
+  padding:3px 7px;backdrop-filter:blur(4px);
+  opacity:0;transition:opacity 0.25s;
+}
+.work-card:hover .card-tag{opacity:1;}
+.card-fb{width:100%;height:100%;position:absolute;inset:0;}
+
+/* NAME */
+#name-layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;pointer-events:none;}
+#name-btn{pointer-events:all;cursor:pointer;background:none;border:none;display:flex;flex-direction:column;align-items:center;padding:2rem 3rem;position:relative;}
+#name-btn::before{content:'';position:absolute;inset:0;border:1px solid rgba(180,150,80,0.1);transition:border-color 0.4s,background 0.4s;}
+#name-btn:hover::before{border-color:rgba(180,150,80,0.35);background:rgba(10,18,10,0.7);}
+.n-eye{font-size:9px;letter-spacing:0.45em;text-transform:uppercase;color:rgba(180,150,80,0.5);margin-bottom:0.7rem;}
+.n-main{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,8vw,7rem);font-weight:300;line-height:0.87;color:#e8dcc0;letter-spacing:-0.01em;text-align:center;}
+.n-main em{font-style:italic;color:#b4a060;}
+.n-rule{width:55px;height:1px;background:rgba(180,150,80,0.25);margin:0.9rem 0;}
+.n-sub{font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(200,180,140,0.35);}
+.n-hint{font-size:9px;letter-spacing:0.18em;color:rgba(180,150,80,0.28);margin-top:6px;text-transform:uppercase;transition:color 0.3s;}
+#name-btn:hover .n-hint{color:rgba(180,150,80,0.6);}
+
+#scroll-hint{position:absolute;bottom:1.75rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;z-index:10;animation:fadeup 1s ease 1s both;}
+.s-line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(180,150,80,0),rgba(180,150,80,0.4));animation:grow-line 2.2s ease-in-out infinite;}
+.s-txt{font-size:9px;letter-spacing:0.28em;color:rgba(180,150,80,0.3);text-transform:uppercase;}
+
+/* ABOUT */
+#about-page{background:#f4efe6;overflow-y:auto;font-family:'Cormorant Garamond',serif;color:#1a2e1a;}
+.a-nav{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;background:#f4efe6;border-bottom:1px solid rgba(26,46,26,0.1);}
+.a-nav-logo{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#1a2e1a;}
+.back-btn{background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#5a6e2a;display:flex;align-items:center;gap:5px;transition:color 0.2s;padding:0;}
+.back-btn:hover{color:#1a2e1a;}
+.back-btn::before{content:'← ';font-size:11px;}
+.a-hero{display:grid;grid-template-columns:1fr 1fr;min-height:88vh;}
+.a-hero-l{background:#1a2e1a;display:flex;flex-direction:column;justify-content:flex-end;padding:3rem 2.5rem;position:relative;overflow:hidden;}
+.a-hero-l::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 25% 70%,#2d4a1e 0%,transparent 70%);}
+.a-issue{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(180,150,80,0.55);margin-bottom:2rem;position:relative;z-index:1;}
+.a-hl{font-size:clamp(2.6rem,5vw,4.8rem);font-weight:300;line-height:0.9;color:#e8dcc0;letter-spacing:-0.01em;position:relative;z-index:1;}
+.a-hl em{font-style:italic;color:#b4a060;}
+.a-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.18em;color:rgba(200,180,140,0.4);text-transform:uppercase;margin-top:1.4rem;position:relative;z-index:1;}
+.a-hero-r{padding:3.5rem 2.5rem;display:flex;flex-direction:column;justify-content:center;border-left:1px solid rgba(26,46,26,0.08);}
+.a-pull{font-size:clamp(1.1rem,2vw,1.6rem);font-weight:300;font-style:italic;line-height:1.5;color:#2d4a1e;margin-bottom:2rem;padding-bottom:1.75rem;border-bottom:1px solid rgba(26,46,26,0.1);}
+.a-body{font-size:1rem;line-height:1.85;color:#3a3a2e;font-weight:300;margin-bottom:1.1rem;}
+.a-stat-row{display:flex;gap:2rem;margin-top:1.2rem;}
+.a-stat{display:flex;flex-direction:column;gap:3px;}
+.a-stat-n{font-size:1.5rem;font-weight:600;color:#1a2e1a;}
+.a-stat-l{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.15em;color:#6b7c3a;text-transform:uppercase;}
+.a-section{padding:2.5rem;}
+.a-sec-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:#5a6e2a;margin-bottom:1.75rem;display:flex;align-items:center;gap:1rem;}
+.a-sec-lbl::after{content:'';flex:1;height:1px;background:rgba(26,46,26,0.1);}
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(26,46,26,0.08);}
+.skill-item{background:#f4efe6;padding:1.1rem 1.25rem;}
+.sk-n{font-size:1rem;font-weight:600;color:#1a2e1a;margin-bottom:2px;}
+.sk-d{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;color:#6b7c3a;}
+.work-link-row{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 0;border-bottom:1px solid rgba(26,46,26,0.07);cursor:pointer;transition:padding-left 0.3s cubic-bezier(0.16,1,0.3,1);text-decoration:none;color:inherit;position:relative;overflow:hidden;background:none;border-top:none;border-left:none;border-right:none;width:100%;text-align:left;}
+.work-link-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:#5a6e2a;transition:width 0.3s cubic-bezier(0.16,1,0.3,1);}
+.work-link-row:hover::before{width:3px;}
+.work-link-row:hover{padding-left:1rem;}
+.wl-title{font-size:1.35rem;font-weight:300;color:#1a2e1a;}
+.wl-meta{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:#6b7c3a;}
+.wl-arr{font-size:1rem;color:rgba(26,46,26,0.22);transition:transform 0.25s,color 0.25s;}
+.work-link-row:hover .wl-arr{transform:translate(4px,-4px);color:#5a6e2a;}
+.a-contact{padding:3rem 2.5rem;background:#1a2e1a;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;}
+.a-cta{font-size:clamp(1.3rem,2.8vw,2.2rem);font-weight:300;font-style:italic;color:#e8dcc0;line-height:1.2;}
+.a-email{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.18em;color:#b4a060;text-decoration:none;border-bottom:1px solid rgba(180,150,80,0.3);padding-bottom:2px;transition:color 0.2s,border-color 0.2s;}
+.a-email:hover{color:#e8dcc0;border-color:#e8dcc0;}
+
+/* PROJECT */
+#project-page{background:#0a140a;overflow-y:auto;font-family:'Cormorant Garamond',serif;color:#e8dcc0;}
+.p-nav{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;background:rgba(10,20,10,0.96);border-bottom:1px solid rgba(180,150,80,0.08);backdrop-filter:blur(8px);}
+.p-nav-logo{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,150,80,0.45);}
+.p-banner{width:100%;height:52vw;max-height:480px;position:relative;overflow:hidden;}
+.p-banner-img{width:100%;height:100%;object-fit:cover;filter:brightness(0.55) saturate(0.75);}
+.p-banner-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,20,10,1) 0%,rgba(10,20,10,0.2) 50%,transparent 100%);}
+.p-banner-content{position:absolute;bottom:0;left:0;right:0;padding:2.5rem;}
+.p-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(180,150,80,0.5);margin-bottom:0.75rem;}
+.p-title{font-size:clamp(2.5rem,7vw,5.5rem);font-weight:300;line-height:0.88;letter-spacing:-0.01em;margin-bottom:1rem;}
+.p-title em{font-style:italic;color:#b4a060;}
+.p-role{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(200,180,140,0.45);}
+.p-body{padding:2.5rem;max-width:720px;}
+.p-desc{font-size:1.15rem;line-height:1.9;font-weight:300;color:rgba(232,220,192,0.75);margin-bottom:1.5rem;}
+.p-outcomes{margin-top:2rem;}
+.p-out-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(180,150,80,0.45);margin-bottom:1rem;display:flex;align-items:center;gap:1rem;}
+.p-out-lbl::after{content:'';flex:1;height:1px;background:rgba(180,150,80,0.08);}
+.p-out-item{padding:0.85rem 0;border-bottom:1px solid rgba(180,150,80,0.06);font-size:1.05rem;font-weight:300;color:rgba(232,220,192,0.6);line-height:1.6;}
+.p-out-item::before{content:'— ';color:rgba(180,150,80,0.35);}
+.p-links{display:flex;gap:2rem;margin-top:2.5rem;flex-wrap:wrap;}
+.p-link{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#b4a060;text-decoration:none;border-bottom:1px solid rgba(180,150,80,0.25);padding-bottom:3px;transition:color 0.2s,border-color 0.2s;}
+.p-link:hover{color:#e8dcc0;border-color:#e8dcc0;}
+
+@keyframes grow-line{0%,100%{height:36px;opacity:0.35;}50%{height:52px;opacity:0.8;}}
+@keyframes fadeup{from{opacity:0;transform:translate(-50%,10px);}to{opacity:1;transform:translate(-50%,0);}}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home-page">
+  <div id="bg">
+    <div class="bg-ring" style="width:700px;height:700px;top:-200px;right:-120px;"></div>
+    <div class="bg-ring" style="width:450px;height:450px;bottom:-100px;left:-100px;"></div>
+    <div class="bg-ring" style="width:280px;height:280px;top:38%;left:8%;border-color:rgba(180,150,80,0.05);"></div>
+  </div>
+
+  <div id="images-layer">
+    <!-- 01 OT7 -->
+    <div class="work-card" style="left:4%;top:6%;width:21vw;height:29vw;max-width:270px;max-height:370px;transform:rotate(-2.2deg);z-index:5;" onclick="showProject(0)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:linear-gradient(155deg,#1a1000 0%,#3a2800 50%,#5a3800 100%);"></div>
+        <img class="card-img" src="https://img.youtube.com/vi/lkyP_cqqtyQ/maxresdefault.jpg" alt="OT7" loading="lazy" onerror="this.style.opacity=0">
+        <div class="play-btn"></div>
+        <div class="card-tag">Watch</div>
+        <div class="card-label">
+          <div class="card-num">01 — Overtime</div>
+          <div class="card-title">OT7</div>
+          <div class="card-sub">Producer · Events · NFL Network</div>
+        </div>
+      </div>
+    </div>
+    <!-- 02 OT Talk -->
+    <div class="work-card" style="right:5%;top:4%;width:20vw;height:27vw;max-width:255px;max-height:345px;transform:rotate(1.8deg);z-index:4;" onclick="showProject(1)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:linear-gradient(170deg,#0a1a10 0%,#1a3420 50%,#2a4830 100%);"></div>
+        <img class="card-img" src="https://img.youtube.com/vi/jGdMUN1XAiA/maxresdefault.jpg" alt="OT Talk" loading="lazy" onerror="this.style.opacity=0">
+        <div class="play-btn"></div>
+        <div class="card-tag">Watch</div>
+        <div class="card-label">
+          <div class="card-num">02 — Overtime</div>
+          <div class="card-title">OT Talk</div>
+          <div class="card-sub">Producer · Editor · Podcast</div>
+        </div>
+      </div>
+    </div>
+    <!-- 03 OE x Webtoon -->
+    <div class="work-card" style="left:6%;bottom:9%;width:22vw;height:28vw;max-width:275px;max-height:360px;transform:rotate(1.5deg);z-index:5;" onclick="showProject(2)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:linear-gradient(200deg,#100a1a 0%,#1e1030 50%,#2a1848 100%);"></div>
+        <img class="card-img" src="https://img.youtube.com/vi/o2sXFehAS24/maxresdefault.jpg" alt="OE Webtoon" loading="lazy" onerror="this.style.opacity=0">
+        <div class="play-btn"></div>
+        <div class="card-tag">Watch</div>
+        <div class="card-label">
+          <div class="card-num">03 — Overtime Elite</div>
+          <div class="card-title">OE × Webtoon</div>
+          <div class="card-sub">Creative · Motion · Brand</div>
+        </div>
+      </div>
+    </div>
+    <!-- 04 Proving Grounds -->
+    <div class="work-card" style="right:4%;bottom:7%;width:23vw;height:30vw;max-width:285px;max-height:375px;transform:rotate(-1.8deg);z-index:4;" onclick="showProject(3)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:linear-gradient(130deg,#0a1a10 0%,#1a3a20 50%,#2a5a30 100%);"></div>
+        <img class="card-img" src="https://img.youtube.com/vi/1UzLUlpWunw/maxresdefault.jpg" alt="Proving Grounds" loading="lazy" onerror="this.style.opacity=0">
+        <div class="play-btn"></div>
+        <div class="card-tag">Watch</div>
+        <div class="card-label">
+          <div class="card-num">04 — OTX</div>
+          <div class="card-title">Proving Grounds</div>
+          <div class="card-sub">Producer · Editor · YouTube</div>
+        </div>
+      </div>
+    </div>
+    <!-- 05 Only1OfMe -->
+    <div class="work-card" style="left:-1%;top:42%;width:17vw;height:23vw;max-width:215px;max-height:295px;transform:rotate(2.8deg) translateY(-50%);z-index:3;opacity:0.7;" onclick="showProject(4)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:linear-gradient(160deg,#1a1010 0%,#3a1a0a 100%);"></div>
+        <div class="card-tag">View</div>
+        <div class="card-label">
+          <div class="card-num">05 — Theatre</div>
+          <div class="card-title">Only1OfMe</div>
+          <div class="card-sub">Production · Photography</div>
+        </div>
+      </div>
+    </div>
+    <!-- 06 Fire&Spark -->
+    <div class="work-card" style="right:-1%;top:38%;width:17vw;height:23vw;max-width:215px;max-height:295px;transform:rotate(-2.5deg) translateY(-50%);z-index:3;opacity:0.7;" onclick="showProject(5)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:linear-gradient(180deg,#1a0800 0%,#3a1200 50%,#5a1a00 100%);"></div>
+        <div class="card-tag">View</div>
+        <div class="card-label">
+          <div class="card-num">06 — Agency</div>
+          <div class="card-title">Fire&amp;Spark</div>
+          <div class="card-sub">Marketing Manager · SEO</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="name-layer">
+    <button id="name-btn" onclick="showAbout()">
+      <span class="n-eye">Creative Portfolio</span>
+      <span class="n-main">Tripp<br><em>Rams</em></span>
+      <div class="n-rule"></div>
+      <span class="n-sub">Producer · Director · Creator</span>
+      <span class="n-hint">About me ↗</span>
+    </button>
+  </div>
+
+  <div id="scroll-hint">
+    <div class="s-line"></div>
+    <span class="s-txt">Scroll to explore</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div id="about-page">
+  <nav class="a-nav">
+    <span class="a-nav-logo">Tripp Rams</span>
+    <button class="back-btn" onclick="showHome()">Back to work</button>
+  </nav>
+  <div class="a-hero">
+    <div class="a-hero-l">
+      <div class="a-issue">New York, NY · Open to Work</div>
+      <h1 class="a-hl">Five years<br>of making<br>things<br><em>matter.</em></h1>
+      <p class="a-tag">NBC Olympics · Overtime · Fire&amp;Spark</p>
+    </div>
+    <div class="a-hero-r">
+      <p class="a-pull">"Multi-talented creative with a proven track record — diverse experience and relentless curiosity."</p>
+      <p class="a-body">Tripp Rams is a producer, director, and creative strategist based in New York. With 5+ years across media, branding, and content — from NBC's Olympic broadcast desk to four years building Overtime's most ambitious digital franchises.</p>
+      <p class="a-body">From doc-series on NFL Network and live events with millions of viewers, to branded Pokémon collabs and high-profile podcast production with Shedeur Sanders, Travis Hunter, and Flau'jae Johnson — the work spans the full range of modern media.</p>
+      <div class="a-stat-row">
+        <div class="a-stat"><span class="a-stat-n">5+</span><span class="a-stat-l">Years</span></div>
+        <div class="a-stat"><span class="a-stat-n">M+</span><span class="a-stat-l">Viewers reached</span></div>
+        <div class="a-stat"><span class="a-stat-n">NBC</span><span class="a-stat-l">Latest role</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="a-section">
+    <div class="a-sec-lbl">Disciplines</div>
+    <div class="skills-grid">
+      <div class="skill-item"><div class="sk-n">Film &amp; Video</div><div class="sk-d">Production · Edit · Color</div></div>
+      <div class="skill-item"><div class="sk-n">Creative Strategy</div><div class="sk-d">Brand · Campaign · Direction</div></div>
+      <div class="skill-item"><div class="sk-n">Sound &amp; Audio</div><div class="sk-d">Design · Podcast · Mix</div></div>
+      <div class="skill-item"><div class="sk-n">Photography</div><div class="sk-d">Press · Editorial · Events</div></div>
+      <div class="skill-item"><div class="sk-n">Digital &amp; Social</div><div class="sk-d">Strategy · Analytics · Content</div></div>
+      <div class="skill-item"><div class="sk-n">Art Direction</div><div class="sk-d">Concept · Visual · Story</div></div>
+    </div>
+  </div>
+  <div class="a-section" style="padding-top:0;">
+    <div class="a-sec-lbl">Selected Work</div>
+    <button class="work-link-row" onclick="showProject(0)"><div><div class="wl-title">OT7 — Overtime Football</div><div class="wl-meta">Associate Producer · NFL Network · Events</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(1)"><div><div class="wl-title">OT Talk Podcast</div><div class="wl-meta">Producer · Editor · Shedeur Sanders, Travis Hunter</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(2)"><div><div class="wl-title">Overtime Elite × Webtoon</div><div class="wl-meta">Creative · Motion · Cross-platform</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(3)"><div><div class="wl-title">Proving Grounds — OTX</div><div class="wl-meta">Producer · Editor · YouTube Series</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(4)"><div><div class="wl-title">Only1OfMe — Black Theatre United</div><div class="wl-meta">Production Assistant · Press Photography</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(5)" style="border-bottom:none;"><div><div class="wl-title">Fire&amp;Spark Agency</div><div class="wl-meta">Marketing Manager · SEO · E-Commerce Strategy</div></div><span class="wl-arr">↗</span></button>
+  </div>
+  <div class="a-contact">
+    <p class="a-cta">Let's make something<br><em>worth remembering.</em></p>
+    <a class="a-email" href="mailto:tripp.rams@gmail.com">tripp.rams@gmail.com</a>
+  </div>
+</div>
+
+<!-- PROJECT -->
+<div id="project-page">
+  <nav class="p-nav">
+    <span class="p-nav-logo" id="p-nav-label">Tripp Rams</span>
+    <button class="back-btn" onclick="closeProject()" style="color:rgba(180,150,80,0.45);">Back</button>
+  </nav>
+  <div class="p-banner">
+    <img class="p-banner-img" id="p-banner-img" src="" alt="">
+    <div class="p-banner-overlay"></div>
+    <div class="p-banner-content">
+      <div class="p-num" id="p-num">01</div>
+      <h1 class="p-title" id="p-title"></h1>
+      <div class="p-role" id="p-role"></div>
+    </div>
+  </div>
+  <div class="p-body">
+    <p class="p-desc" id="p-desc"></p>
+    <div class="p-outcomes" id="p-outcomes"></div>
+    <div class="p-links" id="p-links"></div>
+  </div>
+</div>
+
+<script>
+const projects = [
+  {num:"01",title:"OT7",titleHTML:"OT7",role:"Associate Producer, Content & Events — Overtime Sports Inc",thumb:"https://img.youtube.com/vi/lkyP_cqqtyQ/maxresdefault.jpg",desc:"OT7 is Overtime's content-first football league — spotlighting the electric personalities and insane athleticism of the best high school football players in the country. As Associate Producer, built the live and digital content engine behind the league: from event production on the ground to documentary recap packages that aired on NFL Network and reached millions of viewers. Over 30% of OT7 players have since been drafted to the NFL.",outcomes:["Millions of live viewers and documentary recap views across platforms","Distribution on NFL Network alongside Overtime's owned channels","Full event production — concept through final delivery","Content featuring future NFL draft picks: Nico Iamaleava, Jeremiah Smith, Bryce Underwood"],links:[{label:"Watch on YouTube",url:"https://youtu.be/lkyP_cqqtyQ"},{label:"OT7 Official Site",url:"https://otseven.com/about"}]},
+  {num:"02",title:"OT Talk",titleHTML:"OT <em>Talk</em>",role:"Producer, Editor & Analytics — Overtime Sports Inc",thumb:"https://img.youtube.com/vi/jGdMUN1XAiA/maxresdefault.jpg",desc:"OT Talk is Overtime's long-form podcast featuring the biggest names in college and professional sports. Produced and edited high-profile conversations with Shedeur Sanders, Travis Hunter, and Flau'jae Johnson. Handled full production from booking to final edit, plus brand integrations with Wendy's, Tubi, Applebee's, e.l.f., and Naked — seamlessly woven into the content without breaking the conversation.",outcomes:["Produced long-form episodes with Shedeur Sanders, Travis Hunter, Flau'jae Johnson","Brand integrations: Wendy's, Tubi, Applebee's, e.l.f., Naked","End-to-end production: shoot, edit, color, delivery","Analytics tracking and performance reporting across episodes"],links:[{label:"Watch an episode",url:"https://www.youtube.com/watch?v=jGdMUN1XAiA&list=PL3kG88Zqx5nGhhXuLT_t5JE-hU8au6dQF&index=38"}]},
+  {num:"03",title:"OE × Webtoon",titleHTML:"OE × <em>Webtoon</em>",role:"Associate Shooter Producer Editor — Overtime Sports Inc",thumb:"https://img.youtube.com/vi/o2sXFehAS24/maxresdefault.jpg",desc:"A creative collaboration between Overtime Elite and Webtoon, the global comics platform. Merged sports storytelling with graphic novel aesthetics to build a cross-platform franchise that brought Overtime Elite's players to a completely new audience. Contributed across the creative and production pipeline.",outcomes:["Cross-platform franchise bridging elite basketball and manga/webtoon culture","Reached Overtime Elite's global audience of next-gen basketball fans","Creative development, production, and editorial across the collaboration","Distinct visual identity merging sports documentary and animation aesthetics"],links:[{label:"Watch the collab",url:"https://www.youtube.com/watch?v=o2sXFehAS24"}]},
+  {num:"04",title:"Proving Grounds",titleHTML:"Proving <em>Grounds</em>",role:"Producer & Editor — OTX / Overtime",thumb:"https://img.youtube.com/vi/1UzLUlpWunw/maxresdefault.jpg",desc:"Proving Grounds is OTX's YouTube docu-series following elite young athletes competing at the highest level. As Producer and Editor, built the story packages and event content that gave the series its texture and pace. The show reached hundreds of thousands of views and established OTX as a serious digital sports network.",outcomes:["Hundreds of thousands of views on YouTube series","Full story package production from event coverage through post","Series editing — pacing, narrative arc, music, graphics","Established OTX's editorial voice and visual identity"],links:[{label:"Watch the series",url:"https://www.youtube.com/watch?v=1UzLUlpWunw"}]},
+  {num:"05",title:"Only1OfMe",titleHTML:"Only<em>1OfMe</em>",role:"Production Assistant & Press Photographer — Black Theatre United",thumb:"",desc:"Supported production and captured press-ready photography for Black Theatre United's Only1OfMe campaign — a project celebrating Black identity, artistic excellence, and the power of representation on stage.",outcomes:["On-set production support across full shoot schedule","Press-ready photography delivered for campaign rollout","Contributed to a culturally significant arts campaign","Worked with Black Theatre United's creative and production leads"],links:[{label:"tripprams.com",url:"https://tripprams.com"}]},
+  {num:"06",title:"Fire&Spark",titleHTML:"Fire&amp;<em>Spark</em>",role:"Marketing Manager — Fire&Spark SEO & Branding Agency, Boston MA",thumb:"",desc:"Led a team of content specialists at this boutique SEO and branding agency focused on e-commerce brands. Promoted to a leadership position quickly — taking full ownership of marketing strategy, content planning, copywriting, and events management across multiple client accounts.",outcomes:["Promoted to leadership role within months of joining","Oversaw full marketing strategy for multiple e-commerce clients","Managed team of content specialists day-to-day","Content strategy, copywriting, events management, and reporting"],links:[{label:"tripprams.com",url:"https://tripprams.com"}]}
+];
+
+let scrollY=0,targetScroll=0,isAnim=false;
+function lerp(a,b,t){return a+(b-a)*t;}
+function onWheel(e){e.preventDefault();targetScroll+=e.deltaY*0.55;targetScroll=Math.max(-340,Math.min(340,targetScroll));if(!isAnim)tick();}
+function tick(){isAnim=true;scrollY=lerp(scrollY,targetScroll,0.075);document.getElementById('bg').style.transform=`translateY(${scrollY*0.13}px)`;document.getElementById('images-layer').style.transform=`translateY(${scrollY*0.46}px)`;if(Math.abs(scrollY-targetScroll)>0.1){requestAnimationFrame(tick);}else{scrollY=targetScroll;isAnim=false;}}
+let ts=0;
+function onTS(e){ts=e.touches[0].clientY;}
+function onTM(e){e.preventDefault();const dy=ts-e.touches[0].clientY;targetScroll+=dy*0.75;targetScroll=Math.max(-340,Math.min(340,targetScroll));ts=e.touches[0].clientY;if(!isAnim)tick();}
+const hp=document.getElementById('home-page');
+hp.addEventListener('wheel',onWheel,{passive:false});
+hp.addEventListener('touchstart',onTS,{passive:true});
+hp.addEventListener('touchmove',onTM,{passive:false});
+
+let fromPage='home';
+function showAbout(){fromPage='home';document.getElementById('home-page').classList.add('hidden');document.getElementById('about-page').classList.add('active');}
+function showHome(){document.getElementById('about-page').classList.remove('active');document.getElementById('project-page').classList.remove('active');document.getElementById('home-page').classList.remove('hidden');}
+function showProject(i){
+  const p=projects[i];
+  fromPage=document.getElementById('about-page').classList.contains('active')?'about':'home';
+  document.getElementById('p-num').textContent=p.num;
+  document.getElementById('p-title').innerHTML=p.titleHTML;
+  document.getElementById('p-role').textContent=p.role;
+  document.getElementById('p-desc').textContent=p.desc;
+  document.getElementById('p-nav-label').textContent='Tripp Rams — '+p.title;
+  const bi=document.getElementById('p-banner-img');
+  if(p.thumb){bi.src=p.thumb;bi.style.display='block';}else{bi.style.display='none';}
+  document.getElementById('p-outcomes').innerHTML='<div class="p-out-lbl">Outcomes & Impact</div>'+p.outcomes.map(o=>`<div class="p-out-item">${o}</div>`).join('');
+  document.getElementById('p-links').innerHTML=p.links.map(l=>`<a class="p-link" href="${l.url}" target="_blank">${l.label} ↗</a>`).join('');
+  if(fromPage==='about'){document.getElementById('about-page').classList.remove('active');}else{document.getElementById('home-page').classList.add('hidden');}
+  document.getElementById('project-page').classList.add('active');
+  document.getElementById('project-page').scrollTop=0;
+}
+function closeProject(){
+  document.getElementById('project-page').classList.remove('active');
+  if(fromPage==='about'){document.getElementById('about-page').classList.add('active');}else{document.getElementById('home-page').classList.remove('hidden');}
+}
+</script>
+</body>
+</html>
