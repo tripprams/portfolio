@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tripp Rams — Creative Portfolio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=DM+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{background:#1e3320;font-family:'DM Mono',monospace;}
+
+#home-page,#about-page,#project-page{position:fixed;inset:0;transition:opacity 0.65s ease,transform 0.65s cubic-bezier(0.16,1,0.3,1);}
+#about-page,#project-page{opacity:0;pointer-events:none;transform:translateY(28px);z-index:200;}
+#about-page.active,#project-page.active{opacity:1;pointer-events:all;transform:translateY(0);}
+#home-page.hidden{opacity:0;pointer-events:none;}
+
+#bg{position:absolute;inset:0;background:#1e3320;will-change:transform;}
+#botanicals{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden;}
+
+#images-layer{
+  position:absolute;
+  left:0;right:0;
+  top:-40%;
+  height:180%;
+  will-change:transform;
+  z-index:3;
+}
+
+.work-card{
+  position:absolute;cursor:pointer;overflow:hidden;
+  border:1px solid rgba(210,160,70,0.22);
+  transition:border-color 0.3s,box-shadow 0.3s,transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.work-card:hover{
+  border-color:rgba(210,140,50,0.85);
+  box-shadow:0 22px 65px rgba(0,0,0,0.55),0 0 0 1px rgba(210,140,50,0.2);
+  z-index:50!important;
+  transform:scale(1.04) rotate(0deg)!important;
+}
+.card-inner{width:100%;height:100%;position:relative;overflow:hidden;}
+.card-thumb{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 0.5s ease,filter 0.3s ease;filter:brightness(0.65) saturate(0.75);}
+.work-card:hover .card-thumb{transform:scale(1.07);filter:brightness(0.88) saturate(1.05);}
+.card-fb{position:absolute;inset:0;}
+.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(237,224,192,0.45);background:rgba(10,20,10,0.52);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.25s;pointer-events:none;}
+.play-btn::after{content:'';width:0;height:0;border-style:solid;border-width:7px 0 7px 13px;border-color:transparent transparent transparent rgba(237,224,192,0.88);margin-left:3px;}
+.work-card:hover .play-btn{opacity:1;}
+.card-label{position:absolute;bottom:0;left:0;right:0;padding:3rem 1rem 0.9rem;background:linear-gradient(to top,rgba(5,10,5,0.97) 0%,rgba(5,10,5,0.5) 60%,transparent 100%);}
+.card-num{font-size:8px;letter-spacing:0.32em;color:rgba(200,160,70,0.62);text-transform:uppercase;margin-bottom:3px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:#ede0c0;line-height:1.15;margin-bottom:2px;}
+.card-sub{font-size:8px;letter-spacing:0.1em;color:rgba(200,180,130,0.4);text-transform:uppercase;}
+.card-tag{position:absolute;top:9px;left:9px;background:rgba(8,16,8,0.8);border:1px solid rgba(200,160,70,0.3);font-size:7px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(200,160,70,0.7);padding:3px 7px;opacity:0;transition:opacity 0.25s;}
+.work-card:hover .card-tag{opacity:1;}
+
+/* NAME */
+#name-layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;pointer-events:none;}
+#name-btn{pointer-events:all;cursor:pointer;background:none;border:none;display:flex;flex-direction:column;align-items:center;padding:2rem 3rem;position:relative;}
+#name-btn::before{content:'';position:absolute;inset:0;border:1px solid rgba(200,160,70,0.12);transition:border-color 0.4s,background 0.4s;}
+#name-btn:hover::before{border-color:rgba(200,160,70,0.38);background:rgba(8,18,8,0.75);}
+.n-eye{font-size:9px;letter-spacing:0.45em;text-transform:uppercase;color:rgba(200,160,70,0.52);margin-bottom:0.7rem;}
+.n-main{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,8vw,7rem);font-weight:300;line-height:0.87;color:#ede0c0;letter-spacing:-0.01em;text-align:center;}
+.n-main em{font-style:italic;color:#c8903c;}
+.n-rule{width:55px;height:1px;background:rgba(200,160,70,0.25);margin:0.9rem 0;}
+.n-sub{font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(200,180,130,0.35);}
+.n-hint{font-size:9px;letter-spacing:0.18em;color:rgba(200,160,70,0.28);margin-top:6px;text-transform:uppercase;transition:color 0.3s;}
+#name-btn:hover .n-hint{color:rgba(200,160,70,0.65);}
+#scroll-hint{position:absolute;bottom:1.75rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;z-index:10;animation:fadeup 1s ease 1s both;}
+.s-line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(200,160,70,0),rgba(200,160,70,0.42));animation:grow-line 2.2s ease-in-out infinite;}
+.s-txt{font-size:9px;letter-spacing:0.28em;color:rgba(200,160,70,0.3);text-transform:uppercase;}
+
+/* ABOUT */
+#about-page{background:#f2ead8;overflow-y:auto;font-family:'Cormorant Garamond',serif;color:#1e3320;}
+.a-nav{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;background:#f2ead8;border-bottom:1px solid rgba(30,51,32,0.1);}
+.a-nav-logo{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#1e3320;}
+.back-btn{background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#5a6e2a;display:flex;align-items:center;gap:5px;transition:color 0.2s;padding:0;}
+.back-btn:hover{color:#1e3320;}
+.back-btn::before{content:'← ';}
+.a-hero{display:grid;grid-template-columns:1fr 1fr;min-height:88vh;}
+.a-hero-l{background:#1e3320;display:flex;flex-direction:column;justify-content:flex-end;padding:3rem 2.5rem;position:relative;overflow:hidden;}
+.a-hero-l::before{content:'';position:absolute;inset:0;background:#c8601c;opacity:0.07;}
+
+/* ── YOUR PHOTO ── */
+.a-photo-wrap{
+  position:relative;z-index:1;
+  margin-bottom:2rem;
+  width:90px;height:90px;
+}
+.a-photo{
+  width:90px;height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  border:1.5px solid rgba(200,160,70,0.35);
+  display:block;
+}
+/* placeholder shown when no photo src is set */
+.a-photo-placeholder{
+  width:90px;height:90px;border-radius:50%;
+  border:1.5px solid rgba(200,160,70,0.25);
+  background:rgba(200,160,70,0.06);
+  display:flex;align-items:center;justify-content:center;
+}
+.a-photo-placeholder span{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.6rem;font-weight:300;
+  color:rgba(200,160,70,0.3);
+  font-style:italic;
+}
+
+.a-issue{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(200,160,70,0.55);margin-bottom:1.5rem;position:relative;z-index:1;}
+.a-hl{font-size:clamp(2.6rem,5vw,4.8rem);font-weight:300;line-height:0.9;color:#ede0c0;letter-spacing:-0.01em;position:relative;z-index:1;}
+.a-hl em{font-style:italic;color:#c8903c;}
+.a-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.18em;color:rgba(200,180,130,0.4);text-transform:uppercase;margin-top:1.4rem;position:relative;z-index:1;}
+.a-hero-r{padding:3.5rem 2.5rem;display:flex;flex-direction:column;justify-content:center;border-left:1px solid rgba(30,51,32,0.08);}
+.a-pull{font-size:clamp(1.1rem,2vw,1.6rem);font-weight:300;font-style:italic;line-height:1.5;color:#3a2a10;margin-bottom:2rem;padding-bottom:1.75rem;border-bottom:1px solid rgba(30,51,32,0.1);}
+.a-body{font-size:1rem;line-height:1.85;color:#3a3a2e;font-weight:300;margin-bottom:1.1rem;}
+.a-stat-row{display:flex;gap:2rem;margin-top:1.2rem;}
+.a-stat{display:flex;flex-direction:column;gap:3px;}
+.a-stat-n{font-size:1.5rem;font-weight:600;color:#1e3320;}
+.a-stat-l{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.15em;color:#6b7c3a;text-transform:uppercase;}
+.a-section{padding:2.5rem;}
+.a-sec-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:#5a6e2a;margin-bottom:1.75rem;display:flex;align-items:center;gap:1rem;}
+.a-sec-lbl::after{content:'';flex:1;height:1px;background:rgba(30,51,32,0.1);}
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(30,51,32,0.08);}
+.skill-item{background:#f2ead8;padding:1.1rem 1.25rem;}
+.sk-n{font-size:1rem;font-weight:600;color:#1e3320;margin-bottom:2px;}
+.sk-d{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;color:#6b7c3a;}
+.work-link-row{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 0;border-bottom:1px solid rgba(30,51,32,0.07);cursor:pointer;transition:padding-left 0.3s cubic-bezier(0.16,1,0.3,1);text-decoration:none;color:inherit;position:relative;overflow:hidden;background:none;border-top:none;border-left:none;border-right:none;width:100%;text-align:left;}
+.work-link-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:#c8601c;transition:width 0.3s cubic-bezier(0.16,1,0.3,1);}
+.work-link-row:hover::before{width:3px;}
+.work-link-row:hover{padding-left:1rem;}
+.wl-title{font-size:1.35rem;font-weight:300;color:#1e3320;}
+.wl-meta{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:#6b7c3a;}
+.wl-arr{font-size:1rem;color:rgba(30,51,32,0.22);transition:transform 0.25s,color 0.25s;}
+.work-link-row:hover .wl-arr{transform:translate(4px,-4px);color:#c8601c;}
+.a-contact{padding:3rem 2.5rem;background:#1e3320;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;}
+.a-cta{font-size:clamp(1.3rem,2.8vw,2.2rem);font-weight:300;font-style:italic;color:#ede0c0;line-height:1.2;}
+.a-email{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.18em;color:#c8903c;text-decoration:none;border-bottom:1px solid rgba(200,144,60,0.3);padding-bottom:2px;transition:color 0.2s,border-color 0.2s;}
+.a-email:hover{color:#ede0c0;border-color:#ede0c0;}
+
+/* PROJECT */
+#project-page{background:#0c180c;overflow-y:auto;font-family:'Cormorant Garamond',serif;color:#ede0c0;}
+.p-nav{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;background:rgba(12,24,12,0.97);border-bottom:1px solid rgba(200,160,70,0.08);backdrop-filter:blur(8px);}
+.p-nav-logo{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,160,70,0.42);}
+.p-banner{width:100%;height:52vw;max-height:480px;position:relative;overflow:hidden;}
+.p-banner-thumb{width:100%;height:100%;background-size:cover;background-position:center;filter:brightness(0.52) saturate(0.72);}
+.p-banner-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(12,24,12,1) 0%,rgba(12,24,12,0.18) 50%,transparent 100%);}
+.p-banner-content{position:absolute;bottom:0;left:0;right:0;padding:2.5rem;}
+.p-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(200,160,70,0.5);margin-bottom:0.75rem;}
+.p-title{font-size:clamp(2.5rem,7vw,5.5rem);font-weight:300;line-height:0.88;letter-spacing:-0.01em;margin-bottom:1rem;}
+.p-title em{font-style:italic;color:#c8903c;}
+.p-role{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(200,180,130,0.42);}
+.p-body{padding:2.5rem;max-width:720px;}
+.p-desc{font-size:1.15rem;line-height:1.9;font-weight:300;color:rgba(237,224,192,0.72);}
+.p-outcomes{margin-top:2rem;}
+.p-out-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(200,160,70,0.42);margin-bottom:1rem;display:flex;align-items:center;gap:1rem;}
+.p-out-lbl::after{content:'';flex:1;height:1px;background:rgba(200,160,70,0.07);}
+.p-out-item{padding:0.85rem 0;border-bottom:1px solid rgba(200,160,70,0.06);font-size:1.05rem;font-weight:300;color:rgba(237,224,192,0.58);line-height:1.6;}
+.p-out-item::before{content:'— ';color:rgba(200,160,70,0.32);}
+.p-links{display:flex;gap:2rem;margin-top:2.5rem;flex-wrap:wrap;}
+.p-link{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#c8903c;text-decoration:none;border-bottom:1px solid rgba(200,144,60,0.25);padding-bottom:3px;transition:color 0.2s,border-color 0.2s;}
+.p-link:hover{color:#ede0c0;border-color:#ede0c0;}
+.p-banner-fallback{width:100%;height:100%;position:absolute;inset:0;background:#1e3320;}
+
+@keyframes grow-line{0%,100%{height:36px;opacity:0.32;}50%{height:52px;opacity:0.75;}}
+@keyframes fadeup{from{opacity:0;transform:translate(-50%,10px);}to{opacity:1;transform:translate(-50%,0);}}
+@keyframes spin-s{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes spin-r{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HOME PAGE
+     Structure:
+       #bg           — solid matte green, barely moves
+       #botanicals   — SVG flowers/stars, drifts slightly
+       #images-layer — all 6 cards, moves fastest (parallax)
+       #name-layer   — your name, fixed center always
+       #scroll-hint  — animated scroll indicator
+════════════════════════════════════════════ -->
+<div id="home-page">
+  <div id="bg"></div>
+
+  <div id="botanicals">
+    <svg width="100%" height="100%" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- 8-petal flower top-left -->
+      <g transform="translate(105,95)" style="animation:spin-s 50s linear infinite;transform-origin:0px 0px;">
+        <g opacity="0.13" stroke="rgba(200,160,70,1)" fill="none" stroke-width="0.9">
+          <ellipse cx="0" cy="-28" rx="6" ry="14"/>
+          <ellipse cx="0" cy="-28" rx="6" ry="14" transform="rotate(45)"/>
+          <ellipse cx="0" cy="-28" rx="6" ry="14" transform="rotate(90)"/>
+          <ellipse cx="0" cy="-28" rx="6" ry="14" transform="rotate(135)"/>
+          <ellipse cx="0" cy="-28" rx="6" ry="14" transform="rotate(180)"/>
+          <ellipse cx="0" cy="-28" rx="6" ry="14" transform="rotate(225)"/>
+          <ellipse cx="0" cy="-28" rx="6" ry="14" transform="rotate(270)"/>
+          <ellipse cx="0" cy="-28" rx="6" ry="14" transform="rotate(315)"/>
+          <circle cx="0" cy="0" r="6"/><circle cx="0" cy="0" r="3" fill="rgba(200,160,70,0.13)"/>
+        </g>
+      </g>
+      <circle cx="105" cy="95" r="55" fill="none" stroke="rgba(200,160,70,0.055)" stroke-width="0.7"/>
+      <circle cx="105" cy="95" r="78" fill="none" stroke="rgba(200,160,70,0.035)" stroke-width="0.6"/>
+      <!-- starburst top-right -->
+      <g transform="translate(1330,78)" style="animation:spin-r 45s linear infinite;transform-origin:0px 0px;">
+        <g opacity="0.16" stroke="rgba(200,96,28,1)" fill="rgba(200,96,28,0.16)" stroke-width="0.8">
+          <line x1="0" y1="-30" x2="0" y2="30"/><line x1="-26" y1="-15" x2="26" y2="15"/><line x1="-26" y1="15" x2="26" y2="-15"/>
+          <circle cx="0" cy="-30" r="2.5"/><circle cx="0" cy="30" r="2.5"/>
+          <circle cx="-26" cy="-15" r="2.5"/><circle cx="26" cy="-15" r="2.5"/>
+          <circle cx="-26" cy="15" r="2.5"/><circle cx="26" cy="15" r="2.5"/>
+          <circle cx="0" cy="0" r="5" fill="none"/>
+        </g>
+      </g>
+      <circle cx="1330" cy="78" r="50" fill="none" stroke="rgba(200,96,28,0.055)" stroke-width="0.6"/>
+      <!-- 6-petal flower bottom-right -->
+      <g transform="translate(1365,790)" style="animation:spin-s 60s linear infinite;transform-origin:0px 0px;">
+        <g opacity="0.11" stroke="rgba(200,160,70,1)" fill="none" stroke-width="0.9">
+          <ellipse cx="0" cy="-24" rx="5.5" ry="13"/>
+          <ellipse cx="0" cy="-24" rx="5.5" ry="13" transform="rotate(60)"/>
+          <ellipse cx="0" cy="-24" rx="5.5" ry="13" transform="rotate(120)"/>
+          <ellipse cx="0" cy="-24" rx="5.5" ry="13" transform="rotate(180)"/>
+          <ellipse cx="0" cy="-24" rx="5.5" ry="13" transform="rotate(240)"/>
+          <ellipse cx="0" cy="-24" rx="5.5" ry="13" transform="rotate(300)"/>
+          <circle cx="0" cy="0" r="5"/>
+        </g>
+      </g>
+      <!-- branch bottom-left -->
+      <g transform="translate(55,820)" opacity="0.12" stroke="rgba(200,160,70,1)" fill="none" stroke-width="0.9">
+        <path d="M0,50 C0,30 -14,10 -20,-18"/><path d="M0,50 C0,30 14,10 20,-18"/><path d="M0,50 L0,-22"/>
+        <ellipse cx="-22" cy="-22" rx="6" ry="10" transform="rotate(-28,-22,-22)"/>
+        <ellipse cx="22" cy="-22" rx="6" ry="10" transform="rotate(28,22,-22)"/>
+        <ellipse cx="0" cy="-26" rx="6" ry="11"/>
+      </g>
+      <!-- scattered small stars -->
+      <g transform="translate(720,52)" opacity="0.2" stroke="rgba(200,160,70,1)" fill="rgba(200,160,70,0.2)" stroke-width="0.7"><line x1="0" y1="-13" x2="0" y2="13"/><line x1="-13" y1="0" x2="13" y2="0"/><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="-9" y1="9" x2="9" y2="-9"/><circle cx="0" cy="0" r="2.5"/></g>
+      <g transform="translate(195,430)" opacity="0.14" stroke="rgba(200,160,70,1)" fill="rgba(200,160,70,0.14)" stroke-width="0.6"><line x1="0" y1="-11" x2="0" y2="11"/><line x1="-11" y1="0" x2="11" y2="0"/><line x1="-8" y1="-8" x2="8" y2="8"/><line x1="-8" y1="8" x2="8" y2="-8"/><circle cx="0" cy="0" r="2"/></g>
+      <g transform="translate(1155,470)" opacity="0.13" stroke="rgba(200,160,70,1)" fill="rgba(200,160,70,0.13)" stroke-width="0.6"><line x1="0" y1="-12" x2="0" y2="12"/><line x1="-12" y1="0" x2="12" y2="0"/><line x1="-8" y1="-8" x2="8" y2="8"/><line x1="-8" y1="8" x2="8" y2="-8"/><circle cx="0" cy="0" r="2"/></g>
+      <g transform="translate(890,830)" opacity="0.15" stroke="rgba(200,96,28,1)" fill="rgba(200,96,28,0.15)" stroke-width="0.6"><line x1="0" y1="-10" x2="0" y2="10"/><line x1="-10" y1="0" x2="10" y2="0"/><line x1="-7" y1="-7" x2="7" y2="7"/><line x1="-7" y1="7" x2="7" y2="-7"/><circle cx="0" cy="0" r="2"/></g>
+      <g transform="translate(280,770)" opacity="0.12" stroke="rgba(200,160,70,1)" fill="rgba(200,160,70,0.12)" stroke-width="0.6"><line x1="0" y1="-9" x2="0" y2="9"/><line x1="-9" y1="0" x2="9" y2="0"/><circle cx="0" cy="0" r="1.8"/></g>
+      <circle cx="28" cy="455" r="2.2" fill="rgba(200,160,70,0.15)"/>
+      <circle cx="37" cy="444" r="1.5" fill="rgba(200,160,70,0.1)"/>
+      <circle cx="20" cy="466" r="1.5" fill="rgba(200,160,70,0.1)"/>
+      <circle cx="1412" cy="462" r="2" fill="rgba(200,160,70,0.12)"/>
+      <circle cx="1404" cy="474" r="1.5" fill="rgba(200,160,70,0.08)"/>
+      <line x1="148" y1="95" x2="340" y2="95" stroke="rgba(200,160,70,0.055)" stroke-width="0.5"/>
+      <line x1="1100" y1="78" x2="1285" y2="78" stroke="rgba(200,160,70,0.055)" stroke-width="0.5"/>
+    </svg>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       CARD POSITIONS — staggered layout
+       Each card has:
+         left/right  — horizontal position
+         top/bottom  — vertical position within the tall layer
+         width/height — card size (vw = % of viewport width)
+         transform: rotate(Xdeg) — tilt
+         z-index — which card is "in front"
+       
+       TOP ROW: cards at different heights (top: 8%, 18%, 5%)
+                = zigzag stagger, not a straight line
+       BOTTOM ROW: same idea (bottom: 10%, 20%, 8%)
+  ══════════════════════════════════════ -->
+  <div id="images-layer">
+
+    <!-- ── TOP ROW (scroll UP to reveal) ── -->
+
+    <!-- 01 OT7: far left, highest up -->
+    <div class="work-card" style="
+      left:3%;
+      top:8%;
+      width:21vw; height:29vw;
+      max-width:280px; max-height:385px;
+      transform:rotate(-3deg);
+      z-index:5;"
+      onclick="showProject(0)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:#2a1a00;"></div>
+        <div class="card-thumb" style="background-image:url('https://img.youtube.com/vi/lkyP_cqqtyQ/maxresdefault.jpg');"></div>
+        <div class="play-btn"></div><div class="card-tag">Watch</div>
+        <div class="card-label"><div class="card-num">01 — Overtime</div><div class="card-title">OT7</div><div class="card-sub">Producer · Events · NFL Network</div></div>
+      </div>
+    </div>
+
+    <!-- 02 OT Talk: center-left, lower than 01 -->
+    <div class="work-card" style="
+      left:28%;
+      top:20%;
+      width:20vw; height:27vw;
+      max-width:260px; max-height:355px;
+      transform:rotate(2.2deg);
+      z-index:4;"
+      onclick="showProject(1)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:#0a1a0f;"></div>
+        <div class="card-thumb" style="background-image:url('https://img.youtube.com/vi/jGdMUN1XAiA/maxresdefault.jpg');"></div>
+        <div class="play-btn"></div><div class="card-tag">Watch</div>
+        <div class="card-label"><div class="card-num">02 — Overtime</div><div class="card-title">OT Talk</div><div class="card-sub">Producer · Editor · Podcast</div></div>
+      </div>
+    </div>
+
+    <!-- 03 OE x Webtoon: far right, highest up -->
+    <div class="work-card" style="
+      right:3%;
+      top:6%;
+      width:22vw; height:30vw;
+      max-width:285px; max-height:395px;
+      transform:rotate(-1.5deg);
+      z-index:5;"
+      onclick="showProject(2)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:#120820;"></div>
+        <div class="card-thumb" style="background-image:url('https://img.youtube.com/vi/o2sXFehAS24/maxresdefault.jpg');"></div>
+        <div class="play-btn"></div><div class="card-tag">Watch</div>
+        <div class="card-label"><div class="card-num">03 — Overtime Elite</div><div class="card-title">OE × Webtoon</div><div class="card-sub">Creative · Motion · Brand</div></div>
+      </div>
+    </div>
+
+    <!-- ── BOTTOM ROW (scroll DOWN to reveal) ── -->
+
+    <!-- 04 Proving Grounds: far left, lower -->
+    <div class="work-card" style="
+      left:4%;
+      bottom:8%;
+      width:23vw; height:30vw;
+      max-width:295px; max-height:400px;
+      transform:rotate(2.5deg);
+      z-index:5;"
+      onclick="showProject(3)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:#0a1a10;"></div>
+        <div class="card-thumb" style="background-image:url('https://img.youtube.com/vi/1UzLUlpWunw/maxresdefault.jpg');"></div>
+        <div class="play-btn"></div><div class="card-tag">Watch</div>
+        <div class="card-label"><div class="card-num">04 — OTX</div><div class="card-title">Proving Grounds</div><div class="card-sub">Producer · Editor · YouTube</div></div>
+      </div>
+    </div>
+
+    <!-- 05 Only1OfMe: center, highest in bottom row -->
+    <div class="work-card" style="
+      left:31%;
+      bottom:20%;
+      width:20vw; height:27vw;
+      max-width:260px; max-height:355px;
+      transform:rotate(-2.2deg);
+      z-index:4;"
+      onclick="showProject(4)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:#1e1008;"></div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;font-style:italic;color:rgba(237,224,192,0.08);text-align:center;line-height:1.1;">Only<br>1OfMe</span>
+        </div>
+        <div class="card-tag">View</div>
+        <div class="card-label"><div class="card-num">05 — Theatre</div><div class="card-title">Only1OfMe</div><div class="card-sub">Production · Photography</div></div>
+      </div>
+    </div>
+
+    <!-- 06 Fire&Spark: far right, lowest in bottom row -->
+    <div class="work-card" style="
+      right:3%;
+      bottom:7%;
+      width:21vw; height:28vw;
+      max-width:275px; max-height:375px;
+      transform:rotate(1.5deg);
+      z-index:4;"
+      onclick="showProject(5)">
+      <div class="card-inner">
+        <div class="card-fb" style="background:#200800;"></div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <svg width="52" height="62" viewBox="0 0 52 62" style="opacity:0.09">
+            <path d="M26,3 Q34,18 30,30 Q40,16 37,36 Q48,20 42,43 Q38,56 26,60 Q14,56 10,43 Q4,20 15,36 Q12,16 22,30 Q18,18 26,3Z" fill="#c8601c"/>
+          </svg>
+        </div>
+        <div class="card-tag">View</div>
+        <div class="card-label"><div class="card-num">06 — Agency</div><div class="card-title">Fire&amp;Spark</div><div class="card-sub">Marketing Manager · SEO</div></div>
+      </div>
+    </div>
+
+  </div><!-- /images-layer -->
+
+  <div id="name-layer">
+    <button id="name-btn" onclick="showAbout()">
+      <span class="n-eye">Creative Portfolio</span>
+      <span class="n-main">Tripp<br><em>Rams</em></span>
+      <div class="n-rule"></div>
+      <span class="n-sub">Producer · Director · Creator</span>
+      <span class="n-hint">About me ↗</span>
+    </button>
+  </div>
+  <div id="scroll-hint"><div class="s-line"></div><span class="s-txt">Scroll to explore</span></div>
+</div><!-- /home-page -->
+
+
+<!-- ══════════════════════════════════════════
+     ABOUT PAGE
+     Cream background, editorial magazine layout.
+     Left column: dark green, your photo + headline
+     Right column: bio text, stats
+     Below: disciplines grid, work list, contact bar
+════════════════════════════════════════════ -->
+<div id="about-page">
+  <nav class="a-nav">
+    <span class="a-nav-logo">Tripp Rams</span>
+    <button class="back-btn" onclick="showHome()">Back to work</button>
+  </nav>
+  <div class="a-hero">
+    <div class="a-hero-l">
+
+      <!-- ══ YOUR PHOTO — replace the src below with your image URL
+           Options:
+           1. Upload photo to your GitHub repo, use: src="photo.jpg"
+           2. Use any hosted image URL
+           3. Remove this block if you don't want a photo yet ══ -->
+      <div class="a-photo-wrap">
+        <img class="a-photo" src="" alt="Tripp Rams"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="a-photo-placeholder" style="display:none;">
+          <span>TR</span>
+        </div>
+      </div>
+      <!-- ══ END PHOTO BLOCK ══ -->
+
+      <div class="a-issue">New York, NY · Open to Work</div>
+      <h1 class="a-hl">Five years<br>of making<br>things<br><em>matter.</em></h1>
+      <p class="a-tag">NBC Olympics · Overtime · Fire&amp;Spark</p>
+    </div>
+    <div class="a-hero-r">
+      <p class="a-pull">"Multi-talented creative with a proven track record — diverse experience and relentless curiosity."</p>
+      <p class="a-body">Tripp Rams is a producer, director, and creative strategist based in New York. With 5+ years across media, branding, and content — from NBC's Olympic broadcast desk to four years building Overtime's most ambitious digital franchises.</p>
+      <p class="a-body">From doc-series on NFL Network and live events with millions of viewers, to branded Pokémon collabs and high-profile podcast production with Shedeur Sanders, Travis Hunter, and Flau'jae Johnson — the work spans the full range of modern media.</p>
+      <div class="a-stat-row">
+        <div class="a-stat"><span class="a-stat-n">5+</span><span class="a-stat-l">Years</span></div>
+        <div class="a-stat"><span class="a-stat-n">M+</span><span class="a-stat-l">Viewers reached</span></div>
+        <div class="a-stat"><span class="a-stat-n">NBC</span><span class="a-stat-l">Latest role</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="a-section">
+    <div class="a-sec-lbl">Disciplines</div>
+    <div class="skills-grid">
+      <div class="skill-item"><div class="sk-n">Film &amp; Video</div><div class="sk-d">Production · Edit · Color</div></div>
+      <div class="skill-item"><div class="sk-n">Creative Strategy</div><div class="sk-d">Brand · Campaign · Direction</div></div>
+      <div class="skill-item"><div class="sk-n">Sound &amp; Audio</div><div class="sk-d">Design · Podcast · Mix</div></div>
+      <div class="skill-item"><div class="sk-n">Photography</div><div class="sk-d">Press · Editorial · Events</div></div>
+      <div class="skill-item"><div class="sk-n">Digital &amp; Social</div><div class="sk-d">Strategy · Analytics · Content</div></div>
+      <div class="skill-item"><div class="sk-n">Art Direction</div><div class="sk-d">Concept · Visual · Story</div></div>
+    </div>
+  </div>
+  <div class="a-section" style="padding-top:0;">
+    <div class="a-sec-lbl">Selected Work</div>
+    <!-- ══ ADD NEW PROJECTS HERE — copy one of these button lines ══ -->
+    <button class="work-link-row" onclick="showProject(0)"><div><div class="wl-title">OT7 — Overtime Football</div><div class="wl-meta">Associate Producer · NFL Network · Events</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(1)"><div><div class="wl-title">OT Talk Podcast</div><div class="wl-meta">Producer · Editor · Shedeur Sanders, Travis Hunter</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(2)"><div><div class="wl-title">Overtime Elite × Webtoon</div><div class="wl-meta">Creative · Motion · Cross-platform</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(3)"><div><div class="wl-title">Proving Grounds — OTX</div><div class="wl-meta">Producer · Editor · YouTube Series</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(4)"><div><div class="wl-title">Only1OfMe — Black Theatre United</div><div class="wl-meta">Production Assistant · Press Photography</div></div><span class="wl-arr">↗</span></button>
+    <button class="work-link-row" onclick="showProject(5)" style="border-bottom:none;"><div><div class="wl-title">Fire&amp;Spark Agency</div><div class="wl-meta">Marketing Manager · SEO · E-Commerce Strategy</div></div><span class="wl-arr">↗</span></button>
+  </div>
+  <div class="a-contact">
+    <p class="a-cta">Let's make something<br><em>worth remembering.</em></p>
+    <a class="a-email" href="mailto:tripp.rams@gmail.com">tripp.rams@gmail.com</a>
+  </div>
+</div><!-- /about-page -->
+
+
+<!-- ══════════════════════════════════════════
+     PROJECT DETAIL PAGE
+     Dynamically populated by showProject(i) in JS.
+     The banner image, title, role, description,
+     outcomes, and links all come from the
+     `projects` array in the <script> below.
+     To add a new project: add an object to that array
+     and add a card + button pointing to its index.
+════════════════════════════════════════════ -->
+<div id="project-page">
+  <nav class="p-nav">
+    <span class="p-nav-logo" id="p-nav-label">Tripp Rams</span>
+    <button class="back-btn" onclick="closeProject()" style="color:rgba(200,160,70,0.42);">Back</button>
+  </nav>
+  <div class="p-banner">
+    <div class="p-banner-fallback"></div>
+    <div class="p-banner-thumb" id="p-banner-thumb"></div>
+    <div class="p-banner-overlay"></div>
+    <div class="p-banner-content">
+      <div class="p-num" id="p-num">01</div>
+      <h1 class="p-title" id="p-title"></h1>
+      <div class="p-role" id="p-role"></div>
+    </div>
+  </div>
+  <div class="p-body">
+    <p class="p-desc" id="p-desc"></p>
+    <div class="p-outcomes" id="p-outcomes"></div>
+    <div class="p-links" id="p-links"></div>
+  </div>
+</div><!-- /project-page -->
+
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+     
+     PROJECTS ARRAY — this is where all project
+     content lives. To add a new project:
+     
+     1. Add a new object here following this shape:
+        {
+          num:       "07",
+          title:     "Short Film Title",
+          titleHTML: "Short <em>Film</em>",   ← em = italic gold
+          role:      "Director — Independent",
+          thumb:     "https://img.youtube.com/vi/YOUR_ID/maxresdefault.jpg",
+          desc:      "Description paragraph...",
+          outcomes:  ["Bullet one","Bullet two","Bullet three"],
+          links:     [{label:"Watch",url:"https://youtube.com/..."}]
+        },
+     
+     2. Add a card in #images-layer pointing to onclick="showProject(6)"
+     3. Add a button in the about page work list pointing to onclick="showProject(6)"
+     
+     That's it — the project page auto-populates.
+════════════════════════════════════════════ -->
+<script>
+const projects = [
+  // ── 0 ──
+  {
+    num:"01", title:"OT7", titleHTML:"OT7",
+    role:"Associate Producer, Content & Events — Overtime Sports Inc",
+    thumb:"https://img.youtube.com/vi/lkyP_cqqtyQ/maxresdefault.jpg",
+    desc:"OT7 is Overtime's content-first football league spotlighting the best high school football players in the country. As Associate Producer, built the live and digital content engine — from event production on the ground to documentary recap packages that aired on NFL Network. Over 30% of OT7 players have since been drafted to the NFL.",
+    outcomes:["Millions of live viewers and documentary recap views","Distribution on NFL Network alongside Overtime's channels","Full event production — concept through final delivery","Content featuring Nico Iamaleava, Jeremiah Smith, Bryce Underwood"],
+    links:[{label:"Watch on YouTube",url:"https://youtu.be/lkyP_cqqtyQ"},{label:"OT7 Official Site",url:"https://otseven.com/about"}]
+  },
+  // ── 1 ──
+  {
+    num:"02", title:"OT Talk", titleHTML:"OT <em>Talk</em>",
+    role:"Producer, Editor & Analytics — Overtime Sports Inc",
+    thumb:"https://img.youtube.com/vi/jGdMUN1XAiA/maxresdefault.jpg",
+    desc:"OT Talk is Overtime's long-form podcast with the biggest names in sports. Produced and edited episodes with Shedeur Sanders, Travis Hunter, and Flau'jae Johnson — full production from shoot through final edit, plus seamlessly integrated brand deals with Wendy's, Tubi, Applebee's, e.l.f., and Naked.",
+    outcomes:["Long-form episodes with Shedeur Sanders, Travis Hunter, Flau'jae Johnson","Brand integrations: Wendy's, Tubi, Applebee's, e.l.f., Naked","End-to-end: shoot, edit, color, delivery","Analytics tracking and performance reporting"],
+    links:[{label:"Watch an episode",url:"https://www.youtube.com/watch?v=jGdMUN1XAiA&list=PL3kG88Zqx5nGhhXuLT_t5JE-hU8au6dQF&index=38"}]
+  },
+  // ── 2 ──
+  {
+    num:"03", title:"OE × Webtoon", titleHTML:"OE × <em>Webtoon</em>",
+    role:"Associate Shooter Producer Editor — Overtime Sports Inc",
+    thumb:"https://img.youtube.com/vi/o2sXFehAS24/maxresdefault.jpg",
+    desc:"A collaboration between Overtime Elite and Webtoon merging sports storytelling with graphic novel aesthetics — bringing OE's players to a completely new global audience. Contributed across the full creative and production pipeline.",
+    outcomes:["Cross-platform franchise bridging elite basketball and webtoon culture","Reached OE's global next-gen basketball audience","Creative development, production, and editorial","Merged sports documentary and animation aesthetics"],
+    links:[{label:"Watch the collab",url:"https://www.youtube.com/watch?v=o2sXFehAS24"}]
+  },
+  // ── 3 ──
+  {
+    num:"04", title:"Proving Grounds", titleHTML:"Proving <em>Grounds</em>",
+    role:"Producer & Editor — OTX / Overtime",
+    thumb:"https://img.youtube.com/vi/1UzLUlpWunw/maxresdefault.jpg",
+    desc:"OTX's YouTube docu-series following elite young athletes competing at the highest level. Built the story packages and event content that gave the series its texture and pace — reaching hundreds of thousands of views and establishing OTX as a serious digital sports network.",
+    outcomes:["Hundreds of thousands of views on YouTube","Full story production from event coverage through post","Series editing — pacing, narrative, music, graphics","Established OTX's editorial voice and visual identity"],
+    links:[{label:"Watch the series",url:"https://www.youtube.com/watch?v=1UzLUlpWunw"}]
+  },
+  // ── 4 ──
+  {
+    num:"05", title:"Only1OfMe", titleHTML:"Only<em>1OfMe</em>",
+    role:"Production Assistant & Press Photographer — Black Theatre United",
+    thumb:"",
+    desc:"Supported production and captured press-ready photography for Black Theatre United's Only1OfMe campaign — celebrating Black identity, artistic excellence, and representation on stage.",
+    outcomes:["On-set production support across full shoot schedule","Press-ready photography for campaign rollout","Contributed to a culturally significant arts campaign","Worked alongside Black Theatre United's creative leads"],
+    links:[{label:"tripprams.com",url:"https://tripprams.com"}]
+  },
+  // ── 5 ──
+  {
+    num:"06", title:"Fire&Spark", titleHTML:"Fire&amp;<em>Spark</em>",
+    role:"Marketing Manager — Fire&Spark SEO & Branding Agency, Boston MA",
+    thumb:"",
+    desc:"Led a team of content specialists at this boutique SEO and branding agency focused on e-commerce brands. Promoted to leadership quickly — owning marketing strategy, content planning, copywriting, and events management across multiple client accounts.",
+    outcomes:["Promoted to leadership within months of joining","Full marketing strategy across multiple e-commerce clients","Managed team of content specialists","Content strategy, copywriting, events, and reporting"],
+    links:[{label:"tripprams.com",url:"https://tripprams.com"}]
+  }
+  // ── ADD NEW PROJECTS BELOW THIS LINE ──
+  // follow the same object shape, increment the num
+];
+
+// ── PARALLAX ──
+let scrollY=0, targetScroll=0, isAnim=false;
+const RANGE = 440;
+function lerp(a,b,t){ return a+(b-a)*t; }
+
+function onWheel(e){
+  e.preventDefault();
+  targetScroll += e.deltaY * 0.65;
+  targetScroll = Math.max(-RANGE, Math.min(RANGE, targetScroll));
+  if(!isAnim) tick();
+}
+function tick(){
+  isAnim = true;
+  scrollY = lerp(scrollY, targetScroll, 0.07);
+  document.getElementById('bg').style.transform         = `translateY(${scrollY*0.04}px)`;
+  document.getElementById('botanicals').style.transform = `translateY(${scrollY*0.07}px)`;
+  document.getElementById('images-layer').style.transform = `translateY(${scrollY*0.6}px)`;
+  if(Math.abs(scrollY-targetScroll) > 0.1){ requestAnimationFrame(tick); }
+  else { scrollY = targetScroll; isAnim = false; }
+}
+let ts = 0;
+function onTS(e){ ts = e.touches[0].clientY; }
+function onTM(e){
+  e.preventDefault();
+  const dy = ts - e.touches[0].clientY;
+  targetScroll += dy * 0.85;
+  targetScroll = Math.max(-RANGE, Math.min(RANGE, targetScroll));
+  ts = e.touches[0].clientY;
+  if(!isAnim) tick();
+}
+const hp = document.getElementById('home-page');
+hp.addEventListener('wheel', onWheel, {passive:false});
+hp.addEventListener('touchstart', onTS, {passive:true});
+hp.addEventListener('touchmove', onTM, {passive:false});
+
+// ── PAGE NAVIGATION ──
+let fromPage = 'home';
+
+function showAbout(){
+  fromPage = 'home';
+  document.getElementById('home-page').classList.add('hidden');
+  document.getElementById('about-page').classList.add('active');
+}
+function showHome(){
+  document.getElementById('about-page').classList.remove('active');
+  document.getElementById('project-page').classList.remove('active');
+  document.getElementById('home-page').classList.remove('hidden');
+}
+function showProject(i){
+  const p = projects[i];
+  fromPage = document.getElementById('about-page').classList.contains('active') ? 'about' : 'home';
+  document.getElementById('p-num').textContent      = p.num;
+  document.getElementById('p-title').innerHTML      = p.titleHTML;
+  document.getElementById('p-role').textContent     = p.role;
+  document.getElementById('p-desc').textContent     = p.desc;
+  document.getElementById('p-nav-label').textContent = 'Tripp Rams — ' + p.title;
+  const bt = document.getElementById('p-banner-thumb');
+  bt.style.backgroundImage = p.thumb ? `url('${p.thumb}')` : 'none';
+  document.getElementById('p-outcomes').innerHTML =
+    '<div class="p-out-lbl">Outcomes & Impact</div>' +
+    p.outcomes.map(o => `<div class="p-out-item">${o}</div>`).join('');
+  document.getElementById('p-links').innerHTML =
+    p.links.map(l => `<a class="p-link" href="${l.url}" target="_blank">${l.label} ↗</a>`).join('');
+  if(fromPage === 'about'){ document.getElementById('about-page').classList.remove('active'); }
+  else { document.getElementById('home-page').classList.add('hidden'); }
+  document.getElementById('project-page').classList.add('active');
+  document.getElementById('project-page').scrollTop = 0;
+}
+function closeProject(){
+  document.getElementById('project-page').classList.remove('active');
+  if(fromPage === 'about'){ document.getElementById('about-page').classList.add('active'); }
+  else { document.getElementById('home-page').classList.remove('hidden'); }
+}
+</script>
+</body>
+</html>
